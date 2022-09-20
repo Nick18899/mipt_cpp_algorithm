@@ -27,39 +27,65 @@ struct Stack {
   }
 };
 
+void Clear(Stack* st);
 Stack* Push(int pushing_number, Stack* st) {
   if (st == nullptr) {
     st = new Stack(pushing_number);
   } else {
     Stack* st_new = st;
     st = new Stack(pushing_number, st_new);
+    Clear(st_new);
   }
-  std::cout << "ok" << std::endl;
   return st;
 }
 
-Stack* Pop(Stack* st) {
-  if (st != nullptr) {
-    Stack* st_new = st->next_in_stack;
-    std::cout << st->curr_value << std::endl;
-    delete st;
-    return st_new;
-  }
-  std::cout << "error" << std::endl;
-  return nullptr;
+Stack* PopFromStack(Stack* st) {
+  Stack* st_new = st->next_in_stack;
+  delete st;
+  return st_new;
 }
 
-void Back(Stack* st) {
-  if (st != nullptr) {
-    std::cout << st->curr_value << std::endl;
+void Pop(Stack*& st1, Stack*& st2) {
+  if (st1 != nullptr) {
+    if (st2 == nullptr) {
+      while (st1 != nullptr) {
+        int value_from_st1 = st1->curr_value;
+        st1 = PopFromStack(st1);
+        st2 = Push(value_from_st1, st2);
+      }
+    }
+    std::cout << st2->curr_value << std::endl;
+    st2 = st2->next_in_stack;
+  } else if (st2 != nullptr) {
+    std::cout << st2->curr_value << std::endl;
+    st2 = st2->next_in_stack;
   } else {
     std::cout << "error" << std::endl;
   }
 }
 
-void Min(Stack* st) {
-  if (st != nullptr) {
-    std::cout << st->min_in_stack << std::endl;
+void Back(Stack*& st1, Stack*& st2) {
+  if (st1 != nullptr) {
+    if (st2 == nullptr) {
+      while (st1 != nullptr) {
+        int value_from_st1 = st1->curr_value;
+        st1 = PopFromStack(st1);
+        st2 = Push(value_from_st1, st2);
+      }
+    }
+    std::cout << st2->curr_value << std::endl;
+  } else {
+    std::cout << "error" << std::endl;
+  }
+}
+
+void Min(Stack* st1, Stack* st2) {
+  if (st1 != nullptr && st2 != nullptr) {
+    std::cout << std::min(st1->min_in_stack, st2->min_in_stack) << std::endl;
+  } else if (st1 != nullptr) {
+    std::cout << st1->min_in_stack << std::endl;
+  } else if (st2 != nullptr) {
+    std::cout << st2->min_in_stack << std::endl;
   } else {
     std::cout << "error" << std::endl;
   }
@@ -81,29 +107,30 @@ void Clear(Stack* st) {
   }
 }
 
-void ReadFromConsole(const char* cmd, Stack*& st) {
+void ReadFromConsole(const char* cmd, Stack*& st1, Stack*& st2) {
   switch (cmd[0]) {
     case 'm':
-      Min(st);
+      Min(st1, st2);
       break;
     case 's':
-      Size(st);
+      Size(st1);
       break;
     case 'c':
-      Clear(st);
-      st = nullptr;
+      Clear(st1);
+      st1 = nullptr;
       std::cout << "ok" << std::endl;
       break;
     case 'f':
-      Back(st);
+      Back(st1, st2);
       break;
     case 'd':
-      st = Pop(st);
+      Pop(st1, st2);
       break;
     case 'e':
       int pushing_number;
       std::cin >> pushing_number;
-      st = Push(pushing_number, st);
+      st1 = Push(pushing_number, st1);
+      std::cout << "ok" << std::endl;
       break;
     default:
       break;
@@ -112,13 +139,15 @@ void ReadFromConsole(const char* cmd, Stack*& st) {
 
 int main() {
   int m;
-  Stack* st = NULL;
+  Stack* st1 = NULL;
+  Stack* st2 = NULL;
   std::cin >> m;
   char str[9];
   for (int i = 0; i < m; ++i) {
     std::cin >> str;
-    ReadFromConsole(str, st);
+    ReadFromConsole(str, st1, st2);
   }
-  Clear(st);
+  Clear(st1);
+  Clear(st2);
   return 0;
 }
