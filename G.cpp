@@ -6,7 +6,7 @@ class Stack {
   int capacity_;
 
  public:
-  Stack(int size = 1000000);
+  Stack(int size = 10000);
   ~Stack();
 
   void Push(char x);
@@ -54,26 +54,30 @@ bool Stack::IsEmpty() { return top_ == -1; }
 bool Stack::IsFull() { return top_ == capacity_ - 1; }
 
 bool CheckingOfLastBracket(Stack*& res, char s) {
-  int current_opened_bracket = res->Pop();
   bool result = false;
-  switch (current_opened_bracket) {
-    case '{':
-      if (s == '}') {
-        result = true;
-      }
-      break;
-    case '[':
-      if (s == ']') {
-        result = true;
-      }
-      break;
-    case '(':
-      if (s == ')') {
-        result = true;
-      }
-      break;
-    default:
-      break;
+  if (res->IsEmpty()) {
+    result = false;
+  } else {
+    int current_opened_bracket = res->Pop();
+    switch (current_opened_bracket) {
+      case '{':
+        if (s == '}') {
+          result = true;
+        }
+        break;
+      case '[':
+        if (s == ']') {
+          result = true;
+        }
+        break;
+      case '(':
+        if (s == ')') {
+          result = true;
+        }
+        break;
+      default:
+        break;
+    }
   }
   return result;
 }
@@ -83,7 +87,7 @@ int main() {
   std::getline(std::cin, s);
   bool flag = true;
   Stack* res = new Stack();
-  for (int i = 0; i < (int)s.size(); ++i) {
+  for (int i = 0; i < s.size(); ++i) {
     if ((s[i] == '(') || (s[i] == '{') || (s[i] == '[')) {
       res->Push(s[i]);
     } else {
